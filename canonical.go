@@ -38,6 +38,9 @@ func CanonicalHost(domain string, code int) func(h http.Handler) http.Handler {
 func (c canonical) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	dest, err := url.Parse(c.domain)
 	if err != nil {
+		if !strings.Contains(c.domain, "//") {
+			c.domain = "//" + c.domain
+		}
 		// Call the next handler if the provided domain fails to parse.
 		c.h.ServeHTTP(w, r)
 		return
